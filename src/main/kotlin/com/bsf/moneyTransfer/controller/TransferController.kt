@@ -4,7 +4,6 @@ import com.bsf.moneyTransfer.dto.ApiError
 import com.bsf.moneyTransfer.dto.ApiResponse
 import com.bsf.moneyTransfer.dto.TransferRequest
 import com.bsf.moneyTransfer.exception.AccountNotFoundException
-import com.bsf.moneyTransfer.exception.InsufficientBalanceException
 import com.bsf.moneyTransfer.service.TransferService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

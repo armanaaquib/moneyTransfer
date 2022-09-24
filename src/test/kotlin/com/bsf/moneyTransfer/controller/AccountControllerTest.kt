@@ -18,13 +18,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.math.BigDecimal
 
 @WebMvcTest(AccountController::class)
-internal class AccountControllerTest {
+internal class AccountControllerTest(@Autowired private val mockMvc: MockMvc) {
 
     @MockBean
     private lateinit var accountService: AccountService
-
-    @Autowired
-    private lateinit var mockMvc: MockMvc
 
     @Test
     fun `should create account`() {

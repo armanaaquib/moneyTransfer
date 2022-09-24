@@ -21,13 +21,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.math.BigDecimal
 
 @WebMvcTest(TransferController::class)
-internal class TransferControllerTest {
+internal class TransferControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @MockBean
     private lateinit var transferService: TransferService
-
-    @Autowired
-    private lateinit var mockMvc: MockMvc
 
     @Test
     fun `should transfer money when sender account has enough balance to transfer`() {
