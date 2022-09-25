@@ -1,7 +1,7 @@
 package com.bsf.moneyTransfer.controller
 
 import com.bsf.moneyTransfer.dto.ApiError
-import com.bsf.moneyTransfer.dto.ApiResponse
+import com.bsf.moneyTransfer.dto.FailureResponse
 import com.bsf.moneyTransfer.dto.MoneyTransferRequest
 import com.bsf.moneyTransfer.exception.AccountNotFoundException
 import com.bsf.moneyTransfer.exception.InsufficientBalanceException
@@ -58,7 +58,7 @@ internal class MoneyTransferControllerTest(@Autowired val mockMvc: MockMvc) {
         )
             .willThrow(InsufficientBalanceException(moneyTransferRequest.amount))
         val expectedResponse =
-            ApiResponse<Any>(error = ApiError("Insufficient available balance to transfer ${moneyTransferRequest.amount}"))
+            FailureResponse(ApiError("Insufficient available balance to transfer ${moneyTransferRequest.amount}"))
 
         mockMvc.perform(
             MockMvcRequestBuilders.post("/moneyTransfers")
@@ -81,7 +81,7 @@ internal class MoneyTransferControllerTest(@Autowired val mockMvc: MockMvc) {
         )
             .willThrow(AccountNotFoundException(moneyTransferRequest.senderAccountNumber))
         val expectedResponse =
-            ApiResponse<Any>(error = ApiError("Could not find a account with ${moneyTransferRequest.senderAccountNumber} account number"))
+            FailureResponse(ApiError("Could not find a account with ${moneyTransferRequest.senderAccountNumber} account number"))
 
         mockMvc.perform(
             MockMvcRequestBuilders.post("/moneyTransfers")

@@ -1,30 +1,40 @@
 package com.bsf.moneyTransfer.exception.handler
 
 import com.bsf.moneyTransfer.dto.ApiError
-import com.bsf.moneyTransfer.dto.ApiResponse
+import com.bsf.moneyTransfer.dto.FailureResponse
+import com.bsf.moneyTransfer.exception.AccountNotFoundException
 import com.bsf.moneyTransfer.exception.InsufficientBalanceException
-import org.springframework.http.ResponseEntity
+import org.springframework.http.HttpStatus
 import org.springframework.http.converter.HttpMessageNotReadableException
-import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.RestControllerAdvice
 
-@ControllerAdvice
+@RestControllerAdvice
 class GlobalDefaultExceptionHandler {
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(AccountNotFoundException::class)
+    fun handleAccountNotFoundException(exception: AccountNotFoundException): FailureResponse {
+        return FailureResponse(ApiError(exception.message))
+    }
+
     @ExceptionHandler(InsufficientBalanceException::class)
-    fun handleInsufficientBalanceException(exception: InsufficientBalanceException): ResponseEntity<ApiResponse<Error>> {
-        return ResponseEntity.badRequest().body(ApiResponse(error = ApiError(exception.message)))
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun handleInsufficientBalanceException(exception: InsufficientBalanceException): FailureResponse {
+        return FailureResponse(ApiError(exception.message))
     }
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
-    fun handleHttpMessageNotReadableException(exception: HttpMessageNotReadableException): ResponseEntity<ApiResponse<Error>> {
-        return ResponseEntity.badRequest().body(ApiResponse(error = ApiError(exception.message ?: "Invalid request")))
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun handleHttpMessageNotReadableException(exception: HttpMessageNotReadableException): FailureResponse {
+        return FailureResponse(ApiError(exception.message ?: "Invalid request"))
     }
 
     @ExceptionHandler(Exception::class)
-    fun handleException(exception: Exception): ResponseEntity<ApiResponse<Error>> {
-        return ResponseEntity.internalServerError()
-            .body(ApiResponse(error = ApiError(exception.message ?: "Internal server error")))
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    fun handleException(exception: Exception): FailureResponse {
+        return FailureResponse(ApiError(exception.message ?: "Internal server error"))
     }
 
 }

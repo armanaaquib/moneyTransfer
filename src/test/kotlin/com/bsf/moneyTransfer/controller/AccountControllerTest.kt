@@ -1,7 +1,8 @@
 package com.bsf.moneyTransfer.controller
 
 import com.bsf.moneyTransfer.dto.ApiError
-import com.bsf.moneyTransfer.dto.ApiResponse
+import com.bsf.moneyTransfer.dto.FailureResponse
+import com.bsf.moneyTransfer.dto.SuccessResponse
 import com.bsf.moneyTransfer.exception.AccountNotFoundException
 import com.bsf.moneyTransfer.model.Account
 import com.bsf.moneyTransfer.service.AccountService
@@ -27,7 +28,7 @@ internal class AccountControllerTest(@Autowired private val mockMvc: MockMvc) {
     fun `should create account`() {
         val accountNumber = "123"
         given(accountService.createAccount()).willReturn(Account(accountNumber))
-        val expectedResponse = ApiResponse(Account(accountNumber, BigDecimal(0)))
+        val expectedResponse = SuccessResponse(Account(accountNumber, BigDecimal(0)))
 
         mockMvc.perform(MockMvcRequestBuilders.post("/accounts"))
             .andExpect(status().isCreated)
@@ -39,7 +40,7 @@ internal class AccountControllerTest(@Autowired private val mockMvc: MockMvc) {
     fun `should get account when account is present`() {
         val accountNumber = "123"
         given(accountService.getAccount(accountNumber)).willReturn(Account(accountNumber))
-        val expectedResponse = ApiResponse(Account(accountNumber, BigDecimal(0)))
+        val expectedResponse = SuccessResponse(Account(accountNumber, BigDecimal(0)))
 
         mockMvc.perform(MockMvcRequestBuilders.get("/accounts/$accountNumber"))
             .andExpect(status().isOk)
@@ -51,7 +52,7 @@ internal class AccountControllerTest(@Autowired private val mockMvc: MockMvc) {
         val accountNumber = "123"
         given(accountService.getAccount(accountNumber)).willThrow(AccountNotFoundException(accountNumber))
         val expectedResponse =
-            ApiResponse<Any>(error = ApiError("Could not find a account with $accountNumber account number"))
+            FailureResponse(ApiError("Could not find a account with $accountNumber account number"))
 
         mockMvc.perform(MockMvcRequestBuilders.get("/accounts/$accountNumber"))
             .andExpect(status().isNotFound)

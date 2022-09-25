@@ -1,7 +1,8 @@
 package com.bsf.moneyTransfer.controller
 
 import com.bsf.moneyTransfer.dto.ApiError
-import com.bsf.moneyTransfer.dto.ApiResponse
+import com.bsf.moneyTransfer.dto.FailureResponse
+import com.bsf.moneyTransfer.dto.SuccessResponse
 import com.bsf.moneyTransfer.exception.AccountNotFoundException
 import com.bsf.moneyTransfer.model.Account
 import com.bsf.moneyTransfer.service.AccountService
@@ -15,7 +16,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 class AccountController(private val accountService: AccountService) {
 
     @PostMapping
-    fun createAccount(): ResponseEntity<ApiResponse<Account>> {
+    @ResponseStatus(HttpStatus.CREATED)
+    fun createAccount(): ResponseEntity<SuccessResponse<Account>> {
         val account = accountService.createAccount()
         val location = ServletUriComponentsBuilder
             .fromCurrentRequest()
@@ -23,14 +25,10 @@ class AccountController(private val accountService: AccountService) {
             .buildAndExpand(account.accountNumber)
             .toUri();
 
-        return ResponseEntity.created(location).body(ApiResponse(account))
+        return ResponseEntity.created(location).body(SuccessResponse(account))
     }
 
     @GetMapping("/{accountNumber}")
-    fun getAccount(@PathVariable accountNumber: String) = ApiResponse(accountService.getAccount(accountNumber))
+    fun getAccount(@PathVariable accountNumber: String) = SuccessResponse(accountService.getAccount(accountNumber))
 
-    @ExceptionHandler(AccountNotFoundException::class)
-    fun handleAccountNotFoundException(exception: AccountNotFoundException): ResponseEntity<ApiResponse<Error>> {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse(error = ApiError(exception.message)))
-    }
 }
