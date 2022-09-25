@@ -2,23 +2,22 @@ package com.bsf.moneyTransfer.controller
 
 import com.bsf.moneyTransfer.dto.ApiError
 import com.bsf.moneyTransfer.dto.ApiResponse
-import com.bsf.moneyTransfer.dto.TransferRequest
+import com.bsf.moneyTransfer.dto.MoneyTransferRequest
 import com.bsf.moneyTransfer.exception.AccountNotFoundException
-import com.bsf.moneyTransfer.service.TransferService
-import org.springframework.http.HttpStatus
+import com.bsf.moneyTransfer.service.MoneyTransferService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/transfers")
-class TransferController(private val transferService: TransferService) {
+@RequestMapping("/moneyTransfers")
+class MoneyTransferController(private val moneyTransferService: MoneyTransferService) {
 
     @PostMapping
-    fun transferMoney(@RequestBody transferRequest: TransferRequest): ResponseEntity<Unit> {
-        transferService.transferMoney(
-            transferRequest.senderAccountNumber,
-            transferRequest.receiverAccountNumber,
-            transferRequest.amount
+    fun transferMoney(@RequestBody moneyTransferRequest: MoneyTransferRequest): ResponseEntity<Unit> {
+        moneyTransferService.transferMoney(
+            moneyTransferRequest.senderAccountNumber,
+            moneyTransferRequest.receiverAccountNumber,
+            moneyTransferRequest.amount
         )
         return ResponseEntity.noContent().build()
     }
