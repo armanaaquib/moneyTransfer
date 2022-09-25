@@ -33,7 +33,7 @@ internal class MoneyTransferControllerTest(@Autowired val mockMvc: MockMvc) {
         val moneyTransferRequest = MoneyTransferRequest(senderAccountNumber, receiverAccountNumber, BigDecimal(100))
 
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/moneyTransfers")
+            MockMvcRequestBuilders.post("/moneyTransfer")
                 .content(asJsonString(moneyTransferRequest))
                 .contentType(MediaType.APPLICATION_JSON)
         )
@@ -61,7 +61,7 @@ internal class MoneyTransferControllerTest(@Autowired val mockMvc: MockMvc) {
             FailureResponse(ApiError("Insufficient available balance to transfer ${moneyTransferRequest.amount}"))
 
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/moneyTransfers")
+            MockMvcRequestBuilders.post("/moneyTransfer")
                 .content(asJsonString(moneyTransferRequest))
                 .contentType(MediaType.APPLICATION_JSON)
         )
@@ -84,7 +84,7 @@ internal class MoneyTransferControllerTest(@Autowired val mockMvc: MockMvc) {
             FailureResponse(ApiError("Could not find a account with ${moneyTransferRequest.senderAccountNumber} account number"))
 
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/moneyTransfers")
+            MockMvcRequestBuilders.post("/moneyTransfer")
                 .content(asJsonString(moneyTransferRequest))
                 .contentType(MediaType.APPLICATION_JSON)
         )

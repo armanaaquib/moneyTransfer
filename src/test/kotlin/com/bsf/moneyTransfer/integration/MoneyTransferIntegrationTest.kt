@@ -19,7 +19,7 @@ internal class MoneyTransferIntegrationTest(@Autowired private val restTemplate:
     fun `should transfer money`() {
         val moneyTransferRequest = MoneyTransferRequest("123", "124", BigDecimal(10))
 
-        val entity = restTemplate.postForEntity("/moneyTransfers", moneyTransferRequest, SuccessResponse::class.java)
+        val entity = restTemplate.postForEntity("/moneyTransfer", moneyTransferRequest, SuccessResponse::class.java)
 
         assertEquals(HttpStatus.NO_CONTENT, entity.statusCode)
     }
@@ -30,7 +30,7 @@ internal class MoneyTransferIntegrationTest(@Autowired private val restTemplate:
         val expectedResponse =
             FailureResponse(ApiError("Insufficient available balance to transfer ${moneyTransferRequest.amount}"))
 
-        val entity = restTemplate.postForEntity("/moneyTransfers", moneyTransferRequest, FailureResponse::class.java)
+        val entity = restTemplate.postForEntity("/moneyTransfer", moneyTransferRequest, FailureResponse::class.java)
 
         assertEquals(HttpStatus.BAD_REQUEST, entity.statusCode)
         assertEquals(expectedResponse, entity.body)
@@ -42,7 +42,7 @@ internal class MoneyTransferIntegrationTest(@Autowired private val restTemplate:
         val expectedResponse =
             FailureResponse(error = ApiError("Could not find a account with ${moneyTransferRequest.senderAccountNumber} account number"))
 
-        val entity = restTemplate.postForEntity("/moneyTransfers", moneyTransferRequest, FailureResponse::class.java)
+        val entity = restTemplate.postForEntity("/moneyTransfer", moneyTransferRequest, FailureResponse::class.java)
 
         assertEquals(HttpStatus.BAD_REQUEST, entity.statusCode)
         assertEquals(expectedResponse, entity.body)
@@ -55,7 +55,7 @@ internal class MoneyTransferIntegrationTest(@Autowired private val restTemplate:
         val expectedResponse =
             FailureResponse(error = ApiError("Could not find a account with ${moneyTransferRequest.receiverAccountNumber} account number"))
 
-        val entity = restTemplate.postForEntity("/moneyTransfers", moneyTransferRequest, FailureResponse::class.java)
+        val entity = restTemplate.postForEntity("/moneyTransfer", moneyTransferRequest, FailureResponse::class.java)
 
         assertEquals(HttpStatus.BAD_REQUEST, entity.statusCode)
         assertEquals(expectedResponse, entity.body)

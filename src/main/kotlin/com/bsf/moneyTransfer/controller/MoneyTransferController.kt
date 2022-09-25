@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/moneyTransfers")
+@RequestMapping("/moneyTransfer")
 class MoneyTransferController(private val moneyTransferService: MoneyTransferService) {
 
     @PostMapping
