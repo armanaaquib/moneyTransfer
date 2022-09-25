@@ -12,12 +12,11 @@ class MoneyTransferService(private val accountService: AccountService) {
     @Throws(InsufficientBalanceException::class, AccountNotFoundException::class)
     fun transferMoney(senderAccountNumber: String, receiverAccountNumber: String, amount: BigDecimal) {
         var senderAccount = accountService.getAccount(senderAccountNumber)
+        var receiverAccount = accountService.getAccount(receiverAccountNumber)
 
         if(senderAccount.balance < amount) {
             throw InsufficientBalanceException(amount)
         }
-
-        var receiverAccount = accountService.getAccount(receiverAccountNumber)
 
         senderAccount = senderAccount.copy(balance = senderAccount.balance - amount)
         receiverAccount = receiverAccount.copy(balance = receiverAccount.balance + amount)

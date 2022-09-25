@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Profile
 import java.math.BigDecimal
 
 @Configuration
-@Profile("test")
+@Profile("test", "dev")
 class DatabaseConfiguration {
 
     @Bean

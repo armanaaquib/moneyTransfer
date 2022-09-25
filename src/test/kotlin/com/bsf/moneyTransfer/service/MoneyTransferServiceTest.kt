@@ -52,6 +52,7 @@ internal class MoneyTransferServiceTest {
 
         assertEquals("Insufficient available balance to transfer $transferAmount", exception.message)
         verify(accountService).getAccount(senderAccountNumber)
+        verify(accountService).getAccount(receiverAccountNumber)
         verifyNoMoreInteractions(accountService)
     }
 

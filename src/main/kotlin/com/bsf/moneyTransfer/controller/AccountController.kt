@@ -17,7 +17,7 @@ class AccountController(private val accountService: AccountService) {
     @PostMapping
     fun createAccount(): ResponseEntity<ApiResponse<Account>> {
         val account = accountService.createAccount()
-        val location =  ServletUriComponentsBuilder
+        val location = ServletUriComponentsBuilder
             .fromCurrentRequest()
             .path("/{id}")
             .buildAndExpand(account.accountNumber)
