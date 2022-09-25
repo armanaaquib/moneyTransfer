@@ -2,10 +2,19 @@
 
 __dev() {
   export SPRING_PROFILES_ACTIVE=dev
-  ./gradlew bootRun
+  ./gradlew clean bootRun
+}
+
+__test() {
+  ./gradlew clean test
+}
+
+__gradle_build() {
+  ./gradlew clean build
 }
 
 __in_container() {
+  __gradle_build
   docker build -t money-transfer-server:latest .
   docker run -p 8080:8080 -e SPRING_PROFILES_ACTIVE=dev -t money-transfer-server
 }
@@ -15,5 +24,7 @@ CMD=$1
 case ${CMD} in
   in_container) __in_container;;
   dev) __dev;;
+  test) __test;;
+  gradle_build) __gradle_build;;
   *) echo "Command not found";;
 esac
