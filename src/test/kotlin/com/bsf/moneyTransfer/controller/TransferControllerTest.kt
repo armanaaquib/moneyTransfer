@@ -37,7 +37,7 @@ internal class TransferControllerTest(@Autowired val mockMvc: MockMvc) {
                 .content(asJsonString(transferRequest))
                 .contentType(MediaType.APPLICATION_JSON)
         )
-            .andExpect(status().isCreated)
+            .andExpect(status().isNoContent)
         verify(transferService).transferMoney(senderAccountNumber, receiverAccountNumber, transferRequest.amount)
     }
 

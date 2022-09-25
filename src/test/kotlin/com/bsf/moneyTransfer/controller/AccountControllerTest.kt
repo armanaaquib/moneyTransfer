@@ -11,10 +11,10 @@ import org.mockito.BDDMockito.given
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.http.HttpHeaders
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.math.BigDecimal
 
 @WebMvcTest(AccountController::class)
@@ -31,6 +31,7 @@ internal class AccountControllerTest(@Autowired private val mockMvc: MockMvc) {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/accounts"))
             .andExpect(status().isCreated)
+            .andExpect(header().string(HttpHeaders.LOCATION, "http://localhost/accounts/$accountNumber"))
             .andExpect(content().json(asJsonString(expectedResponse)))
     }
 

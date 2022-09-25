@@ -20,12 +20,12 @@ class TransferController(private val transferService: TransferService) {
             transferRequest.receiverAccountNumber,
             transferRequest.amount
         )
-        return ResponseEntity(HttpStatus.CREATED)
+        return ResponseEntity.noContent().build()
     }
 
     @ExceptionHandler(AccountNotFoundException::class)
     fun handleAccountNotFoundException(exception: AccountNotFoundException): ResponseEntity<ApiResponse<Error>> {
-        return ResponseEntity(ApiResponse(error = ApiError(exception.message)), HttpStatus.BAD_REQUEST)
+        return ResponseEntity.badRequest().body(ApiResponse(error = ApiError(exception.message)))
     }
 
 }
