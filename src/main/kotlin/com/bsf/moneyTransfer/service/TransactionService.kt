@@ -7,7 +7,7 @@ import java.math.BigDecimal
 import kotlin.jvm.Throws
 
 @Service
-class MoneyTransferService(private val accountService: AccountService) {
+class TransactionService(private val accountService: AccountService) {
 
     @Throws(InsufficientBalanceException::class, AccountNotFoundException::class)
     fun transferMoney(senderAccountNumber: String, receiverAccountNumber: String, amount: BigDecimal) {

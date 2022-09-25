@@ -14,13 +14,13 @@ import org.mockito.junit.jupiter.MockitoExtension
 import java.math.BigDecimal
 
 @ExtendWith(MockitoExtension::class)
-internal class MoneyTransferServiceTest {
+internal class TransactionServiceTest {
 
     @Mock
     private lateinit var accountService: AccountService
 
     @InjectMocks
-    private lateinit var moneyTransferService: MoneyTransferService
+    private lateinit var transactionService: TransactionService
 
     @Test
     fun `should transfer money when sender account has enough balance to transfer`() {
@@ -31,7 +31,7 @@ internal class MoneyTransferServiceTest {
         given(accountService.getAccount(senderAccountNumber)).willReturn(senderAccount)
         given(accountService.getAccount(receiverAccountNumber)).willReturn(receiverAccount)
 
-        moneyTransferService.transferMoney(senderAccountNumber, receiverAccountNumber, BigDecimal(10))
+        transactionService.transferMoney(senderAccountNumber, receiverAccountNumber, BigDecimal(10))
 
         verify(accountService).updateAccount(senderAccount.copy(balance = BigDecimal(90)))
         verify(accountService).updateAccount(receiverAccount.copy(balance = BigDecimal(110)))
@@ -47,7 +47,7 @@ internal class MoneyTransferServiceTest {
         given(accountService.getAccount(senderAccountNumber)).willReturn(senderAccount)
 
         val exception = assertThrows<InsufficientBalanceException> {
-            moneyTransferService.transferMoney(senderAccountNumber, receiverAccountNumber, transferAmount)
+            transactionService.transferMoney(senderAccountNumber, receiverAccountNumber, transferAmount)
         }
 
         assertEquals("Insufficient available balance to transfer $transferAmount", exception.message)
@@ -63,7 +63,7 @@ internal class MoneyTransferServiceTest {
         given(accountService.getAccount(senderAccountNumber)).willThrow(AccountNotFoundException(senderAccountNumber))
 
         val exception = assertThrows<AccountNotFoundException> {
-            moneyTransferService.transferMoney(senderAccountNumber, receiverAccountNumber, BigDecimal(100))
+            transactionService.transferMoney(senderAccountNumber, receiverAccountNumber, BigDecimal(100))
         }
 
         assertEquals("Could not find a account with $senderAccountNumber account number", exception.message)
@@ -80,7 +80,7 @@ internal class MoneyTransferServiceTest {
 
 
         val exception = assertThrows<AccountNotFoundException> {
-            moneyTransferService.transferMoney(senderAccountNumber, receiverAccountNumber, BigDecimal(10))
+            transactionService.transferMoney(senderAccountNumber, receiverAccountNumber, BigDecimal(10))
         }
 
         assertEquals("Could not find a account with $receiverAccountNumber account number", exception.message)

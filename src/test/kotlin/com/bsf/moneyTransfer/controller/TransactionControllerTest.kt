@@ -2,10 +2,10 @@ package com.bsf.moneyTransfer.controller
 
 import com.bsf.moneyTransfer.dto.ApiError
 import com.bsf.moneyTransfer.dto.FailureResponse
-import com.bsf.moneyTransfer.dto.MoneyTransferRequest
+import com.bsf.moneyTransfer.dto.TransactionRequest
 import com.bsf.moneyTransfer.exception.AccountNotFoundException
 import com.bsf.moneyTransfer.exception.InsufficientBalanceException
-import com.bsf.moneyTransfer.service.MoneyTransferService
+import com.bsf.moneyTransfer.service.TransactionService
 import com.bsf.moneyTransfer.util.asJsonString
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
@@ -20,49 +20,49 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.math.BigDecimal
 
-@WebMvcTest(MoneyTransferController::class)
-internal class MoneyTransferControllerTest(@Autowired val mockMvc: MockMvc) {
+@WebMvcTest(TransactionController::class)
+internal class TransactionControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @MockBean
-    private lateinit var moneyTransferService: MoneyTransferService
+    private lateinit var transactionService: TransactionService
 
     @Test
     fun `should transfer money when sender account has enough balance to transfer`() {
         val senderAccountNumber = "sender_account"
         val receiverAccountNumber = "receiver_account"
-        val moneyTransferRequest = MoneyTransferRequest(senderAccountNumber, receiverAccountNumber, BigDecimal(100))
+        val transactionRequest = TransactionRequest(senderAccountNumber, receiverAccountNumber, BigDecimal(100))
 
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/moneyTransfer")
-                .content(asJsonString(moneyTransferRequest))
+            MockMvcRequestBuilders.post("/transactions")
+                .content(asJsonString(transactionRequest))
                 .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isNoContent)
-        verify(moneyTransferService).transferMoney(
+        verify(transactionService).transferMoney(
             senderAccountNumber,
             receiverAccountNumber,
-            moneyTransferRequest.amount
+            transactionRequest.amount
         )
     }
 
 
     @Test
     fun `should give error when sender account does not have enough balance to transfer`() {
-        val moneyTransferRequest = MoneyTransferRequest("sender_account", "receiver_account", BigDecimal(100))
+        val transactionRequest = TransactionRequest("sender_account", "receiver_account", BigDecimal(100))
         given(
-            moneyTransferService.transferMoney(
-                moneyTransferRequest.senderAccountNumber,
-                moneyTransferRequest.receiverAccountNumber,
-                moneyTransferRequest.amount
+            transactionService.transferMoney(
+                transactionRequest.senderAccountNumber,
+                transactionRequest.receiverAccountNumber,
+                transactionRequest.amount
             )
         )
-            .willThrow(InsufficientBalanceException(moneyTransferRequest.amount))
+            .willThrow(InsufficientBalanceException(transactionRequest.amount))
         val expectedResponse =
-            FailureResponse(ApiError("Insufficient available balance to transfer ${moneyTransferRequest.amount}"))
+            FailureResponse(ApiError("Insufficient available balance to transfer ${transactionRequest.amount}"))
 
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/moneyTransfer")
-                .content(asJsonString(moneyTransferRequest))
+            MockMvcRequestBuilders.post("/transactions")
+                .content(asJsonString(transactionRequest))
                 .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isBadRequest)
@@ -71,21 +71,21 @@ internal class MoneyTransferControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @Test
     fun `should give error when any of the account ids is invalid`() {
-        val moneyTransferRequest = MoneyTransferRequest("sender_account", "receiver_account", BigDecimal(100))
+        val transactionRequest = TransactionRequest("sender_account", "receiver_account", BigDecimal(100))
         given(
-            moneyTransferService.transferMoney(
-                moneyTransferRequest.senderAccountNumber,
-                moneyTransferRequest.receiverAccountNumber,
-                moneyTransferRequest.amount
+            transactionService.transferMoney(
+                transactionRequest.senderAccountNumber,
+                transactionRequest.receiverAccountNumber,
+                transactionRequest.amount
             )
         )
-            .willThrow(AccountNotFoundException(moneyTransferRequest.senderAccountNumber))
+            .willThrow(AccountNotFoundException(transactionRequest.senderAccountNumber))
         val expectedResponse =
-            FailureResponse(ApiError("Could not find a account with ${moneyTransferRequest.senderAccountNumber} account number"))
+            FailureResponse(ApiError("Could not find a account with ${transactionRequest.senderAccountNumber} account number"))
 
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/moneyTransfer")
-                .content(asJsonString(moneyTransferRequest))
+            MockMvcRequestBuilders.post("/transactions")
+                .content(asJsonString(transactionRequest))
                 .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isBadRequest)
