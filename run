@@ -1,0 +1,19 @@
+#!/bin/bash
+
+__dev() {
+  export SPRING_PROFILES_ACTIVE=dev
+  ./gradlew bootRun
+}
+
+__in_container() {
+  docker build -t money-transfer-server:latest .
+  docker run -p 8080:8080 -e SPRING_PROFILES_ACTIVE=dev -t money-transfer-server
+}
+
+CMD=$1
+
+case ${CMD} in
+  in_container) __in_container;;
+  dev) __dev;;
+  *) echo "Command not found";;
+esac
