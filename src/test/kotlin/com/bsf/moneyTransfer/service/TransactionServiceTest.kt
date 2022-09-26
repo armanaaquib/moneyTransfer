@@ -60,7 +60,8 @@ internal class TransactionServiceTest {
     fun `should throw account not found exception when sender account number is not valid`() {
         val senderAccountNumber = "sender_account"
         val receiverAccountNumber = "receiver_account"
-        given(accountService.getAccount(senderAccountNumber)).willThrow(AccountNotFoundException(senderAccountNumber))
+        given(accountService.getAccount(senderAccountNumber))
+            .willAnswer { throw AccountNotFoundException(senderAccountNumber) }
 
         val exception = assertThrows<AccountNotFoundException> {
             transactionService.transferMoney(senderAccountNumber, receiverAccountNumber, BigDecimal(100))
@@ -76,8 +77,7 @@ internal class TransactionServiceTest {
         given(accountService.getAccount(senderAccountNumber))
             .willReturn(Account(accountNumber = senderAccountNumber, balance = BigDecimal(100)))
         given(accountService.getAccount(receiverAccountNumber))
-            .willThrow(AccountNotFoundException(receiverAccountNumber))
-
+            .willAnswer { throw AccountNotFoundException(receiverAccountNumber) }
 
         val exception = assertThrows<AccountNotFoundException> {
             transactionService.transferMoney(senderAccountNumber, receiverAccountNumber, BigDecimal(10))

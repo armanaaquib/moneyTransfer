@@ -50,7 +50,7 @@ internal class AccountControllerTest(@Autowired private val mockMvc: MockMvc) {
     @Test
     fun `should get error when account is not present`() {
         val accountNumber = "123"
-        given(accountService.getAccount(accountNumber)).willThrow(AccountNotFoundException(accountNumber))
+        given(accountService.getAccount(accountNumber)).willAnswer { throw AccountNotFoundException(accountNumber) }
         val expectedResponse =
             FailureResponse(ApiError("Could not find a account with $accountNumber account number"))
 

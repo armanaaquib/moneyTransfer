@@ -56,7 +56,7 @@ internal class TransactionControllerTest(@Autowired val mockMvc: MockMvc) {
                 transactionRequest.amount
             )
         )
-            .willThrow(InsufficientBalanceException(transactionRequest.amount))
+            .willAnswer { throw InsufficientBalanceException(transactionRequest.amount) }
         val expectedResponse =
             FailureResponse(ApiError("Insufficient available balance to transfer ${transactionRequest.amount}"))
 
@@ -79,7 +79,7 @@ internal class TransactionControllerTest(@Autowired val mockMvc: MockMvc) {
                 transactionRequest.amount
             )
         )
-            .willThrow(AccountNotFoundException(transactionRequest.senderAccountNumber))
+            .willAnswer { throw AccountNotFoundException(transactionRequest.senderAccountNumber) }
         val expectedResponse =
             FailureResponse(ApiError("Could not find a account with ${transactionRequest.senderAccountNumber} account number"))
 

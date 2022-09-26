@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 @RestControllerAdvice
 class GlobalDefaultExceptionHandler {
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(AccountNotFoundException::class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     fun handleAccountNotFoundException(exception: AccountNotFoundException): FailureResponse {
         return FailureResponse(ApiError(exception.message))
     }

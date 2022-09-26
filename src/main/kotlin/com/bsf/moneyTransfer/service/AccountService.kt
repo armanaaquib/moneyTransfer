@@ -5,7 +5,6 @@ import com.bsf.moneyTransfer.model.Account
 import com.bsf.moneyTransfer.repository.AccountRepository
 import com.bsf.moneyTransfer.util.UniqueIdGenerator
 import org.springframework.stereotype.Service
-import kotlin.jvm.Throws
 
 @Service
 class AccountService(private val idGenerator: UniqueIdGenerator, private val repository: AccountRepository) {
@@ -15,7 +14,6 @@ class AccountService(private val idGenerator: UniqueIdGenerator, private val rep
         return repository.save(account)
     }
 
-    @Throws(AccountNotFoundException::class)
     fun getAccount(accountNumber: String): Account {
         return repository.findByAccountNumber(accountNumber) ?: throw AccountNotFoundException(accountNumber)
     }
