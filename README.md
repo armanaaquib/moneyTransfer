@@ -5,7 +5,7 @@
 #### To run server in dev mode
 ``./run dev``
 
-#### To run server in container in dev mode
+#### To run server in docker container
 ``./run in_container``
 
 #### To run test
