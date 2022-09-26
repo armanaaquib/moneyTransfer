@@ -2,6 +2,7 @@ package com.bsf.moneyTransfer.service
 
 import com.bsf.moneyTransfer.exception.AccountNotFoundException
 import com.bsf.moneyTransfer.model.Account
+import com.bsf.moneyTransfer.model.Money
 import com.bsf.moneyTransfer.repository.AccountRepository
 import com.bsf.moneyTransfer.util.UniqueIdGenerator
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -43,7 +44,7 @@ internal class AccountServiceTest {
     @Test
     fun `should give account details when account is present`() {
         val accountNumber = "account_number"
-        val expectedAccount = Account(accountNumber, BigDecimal(100))
+        val expectedAccount = Account(accountNumber, Money(BigDecimal(100)))
         given(accountRepository.findByAccountNumber(accountNumber)).willReturn(expectedAccount)
 
         val account = accountService.getAccount(accountNumber)
@@ -60,12 +61,12 @@ internal class AccountServiceTest {
             accountService.getAccount(accountNumber)
         }
 
-        assertEquals("Could not find a account with $accountNumber account number", exception.message)
+        assertEquals("Could not find an account with $accountNumber account number", exception.message)
     }
 
     @Test
     fun `should update account`() {
-        val expectedAccount = Account(accountNumber = "account_number", balance = BigDecimal(100))
+        val expectedAccount = Account(accountNumber = "account_number", balance = Money(BigDecimal(100)))
         given(accountRepository.save(expectedAccount)).willReturn(expectedAccount)
 
         val account = accountService.updateAccount(expectedAccount)

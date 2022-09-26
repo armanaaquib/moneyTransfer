@@ -3,6 +3,7 @@ package com.bsf.moneyTransfer.service
 import com.bsf.moneyTransfer.exception.AccountNotFoundException
 import com.bsf.moneyTransfer.exception.InsufficientBalanceException
 import com.bsf.moneyTransfer.model.Account
+import com.bsf.moneyTransfer.model.Money
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -25,24 +26,24 @@ internal class TransactionServiceTest {
     @Test
     fun `should transfer money when sender account has enough balance to transfer`() {
         val senderAccountNumber = "sender_account"
-        val senderAccount = Account(accountNumber = senderAccountNumber, balance = BigDecimal(100))
+        val senderAccount = Account(accountNumber = senderAccountNumber, balance = Money(BigDecimal(100)))
         val receiverAccountNumber = "receiver_account"
-        val receiverAccount = Account(accountNumber = receiverAccountNumber, balance = BigDecimal(100))
+        val receiverAccount = Account(accountNumber = receiverAccountNumber, balance = Money(BigDecimal(100)))
         given(accountService.getAccount(senderAccountNumber)).willReturn(senderAccount)
         given(accountService.getAccount(receiverAccountNumber)).willReturn(receiverAccount)
 
-        transactionService.transferMoney(senderAccountNumber, receiverAccountNumber, BigDecimal(10))
+        transactionService.transferMoney(senderAccountNumber, receiverAccountNumber, Money(BigDecimal(10)))
 
-        verify(accountService).updateAccount(senderAccount.copy(balance = BigDecimal(90)))
-        verify(accountService).updateAccount(receiverAccount.copy(balance = BigDecimal(110)))
+        verify(accountService).updateAccount(senderAccount.copy(balance = Money(BigDecimal(90))))
+        verify(accountService).updateAccount(receiverAccount.copy(balance = Money(BigDecimal(110))))
     }
 
 
     @Test
     fun `should throw insufficient balance exception when sender account does not have enough balance to transfer`() {
         val senderAccountNumber = "sender_account"
-        val transferAmount = BigDecimal(100)
-        val senderAccount = Account(accountNumber = senderAccountNumber, balance = BigDecimal(10))
+        val transferAmount = Money(BigDecimal(100))
+        val senderAccount = Account(accountNumber = senderAccountNumber, balance = Money(BigDecimal(10)))
         val receiverAccountNumber = "receiver_account"
         given(accountService.getAccount(senderAccountNumber)).willReturn(senderAccount)
 
@@ -50,7 +51,7 @@ internal class TransactionServiceTest {
             transactionService.transferMoney(senderAccountNumber, receiverAccountNumber, transferAmount)
         }
 
-        assertEquals("Insufficient available balance to transfer $transferAmount", exception.message)
+        assertEquals("Insufficient available balance to transfer ${transferAmount.number}", exception.message)
         verify(accountService).getAccount(senderAccountNumber)
         verify(accountService).getAccount(receiverAccountNumber)
         verifyNoMoreInteractions(accountService)
@@ -64,10 +65,10 @@ internal class TransactionServiceTest {
             .willAnswer { throw AccountNotFoundException(senderAccountNumber) }
 
         val exception = assertThrows<AccountNotFoundException> {
-            transactionService.transferMoney(senderAccountNumber, receiverAccountNumber, BigDecimal(100))
+            transactionService.transferMoney(senderAccountNumber, receiverAccountNumber, Money(BigDecimal(100)))
         }
 
-        assertEquals("Could not find a account with $senderAccountNumber account number", exception.message)
+        assertEquals("Could not find an account with $senderAccountNumber account number", exception.message)
     }
 
     @Test
@@ -75,15 +76,15 @@ internal class TransactionServiceTest {
         val senderAccountNumber = "sender_account"
         val receiverAccountNumber = "receiver_account"
         given(accountService.getAccount(senderAccountNumber))
-            .willReturn(Account(accountNumber = senderAccountNumber, balance = BigDecimal(100)))
+            .willReturn(Account(accountNumber = senderAccountNumber, balance = Money(BigDecimal(100))))
         given(accountService.getAccount(receiverAccountNumber))
             .willAnswer { throw AccountNotFoundException(receiverAccountNumber) }
 
         val exception = assertThrows<AccountNotFoundException> {
-            transactionService.transferMoney(senderAccountNumber, receiverAccountNumber, BigDecimal(10))
+            transactionService.transferMoney(senderAccountNumber, receiverAccountNumber, Money(BigDecimal(10)))
         }
 
-        assertEquals("Could not find a account with $receiverAccountNumber account number", exception.message)
+        assertEquals("Could not find an account with $receiverAccountNumber account number", exception.message)
     }
 
 }

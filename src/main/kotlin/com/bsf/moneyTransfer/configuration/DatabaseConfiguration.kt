@@ -1,6 +1,7 @@
 package com.bsf.moneyTransfer.configuration
 
 import com.bsf.moneyTransfer.model.Account
+import com.bsf.moneyTransfer.model.Money
 import com.bsf.moneyTransfer.repository.AccountRepository
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Bean
@@ -14,8 +15,8 @@ class DatabaseConfiguration {
 
     @Bean
     fun databaseInitializer(accountRepository: AccountRepository) = ApplicationRunner {
-        accountRepository.save(Account(accountNumber = "123", balance = BigDecimal(100)))
-        accountRepository.save(Account(accountNumber = "124", balance = BigDecimal(10)))
+        accountRepository.save(Account(accountNumber = "123", balance = Money(BigDecimal(100))))
+        accountRepository.save(Account(accountNumber = "124", balance = Money(BigDecimal(10))))
     }
 
 }

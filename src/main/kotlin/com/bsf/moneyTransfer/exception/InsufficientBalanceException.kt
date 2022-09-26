@@ -1,7 +1,7 @@
 package com.bsf.moneyTransfer.exception
 
-import java.math.BigDecimal
+import com.bsf.moneyTransfer.model.Money
 
-class InsufficientBalanceException(amount: BigDecimal) : Exception() {
-    override val message: String = "Insufficient available balance to transfer $amount"
+class InsufficientBalanceException(amount: Money) : Exception() {
+    override val message: String = "Insufficient available balance to transfer ${amount.number}"
 }

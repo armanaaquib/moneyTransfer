@@ -4,6 +4,7 @@ import com.bsf.moneyTransfer.dto.ApiError
 import com.bsf.moneyTransfer.dto.FailureResponse
 import com.bsf.moneyTransfer.dto.TransactionRequest
 import com.bsf.moneyTransfer.dto.SuccessResponse
+import com.bsf.moneyTransfer.model.Money
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,11 +14,11 @@ import org.springframework.http.HttpStatus
 import java.math.BigDecimal
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-internal class MoneyTransferIntegrationTest(@Autowired private val restTemplate: TestRestTemplate) {
+internal class TransactionIntegrationTest(@Autowired private val restTemplate: TestRestTemplate) {
 
     @Test
     fun `should transfer money`() {
-        val transactionRequest = TransactionRequest("123", "124", BigDecimal(10))
+        val transactionRequest = TransactionRequest("123", "124", Money(BigDecimal(10)))
 
         val entity = restTemplate.postForEntity("/transactions", transactionRequest, SuccessResponse::class.java)
 
@@ -26,9 +27,9 @@ internal class MoneyTransferIntegrationTest(@Autowired private val restTemplate:
 
     @Test
     fun `should get error when sender does not have enough money`() {
-        val transactionRequest = TransactionRequest("123", "124", BigDecimal(110))
+        val transactionRequest = TransactionRequest("123", "124", Money(BigDecimal(110)))
         val expectedResponse =
-            FailureResponse(ApiError("Insufficient available balance to transfer ${transactionRequest.amount}"))
+            FailureResponse(ApiError("Insufficient available balance to transfer ${transactionRequest.amount.number}"))
 
         val entity = restTemplate.postForEntity("/transactions", transactionRequest, FailureResponse::class.java)
 
@@ -38,9 +39,9 @@ internal class MoneyTransferIntegrationTest(@Autowired private val restTemplate:
 
     @Test
     fun `should get error when sender account id not valid`() {
-        val transactionRequest = TransactionRequest("xxx", "124", BigDecimal(10))
+        val transactionRequest = TransactionRequest("xxx", "124", Money(BigDecimal(10)))
         val expectedResponse =
-            FailureResponse(error = ApiError("Could not find a account with ${transactionRequest.senderAccountNumber} account number"))
+            FailureResponse(error = ApiError("Could not find an account with ${transactionRequest.senderAccountNumber} account number"))
 
         val entity = restTemplate.postForEntity("/transactions", transactionRequest, FailureResponse::class.java)
 
@@ -51,9 +52,9 @@ internal class MoneyTransferIntegrationTest(@Autowired private val restTemplate:
 
     @Test
     fun `should get error when receiver account id not valid`() {
-        val transactionRequest = TransactionRequest("123", "xxx", BigDecimal(10))
+        val transactionRequest = TransactionRequest("123", "xxx", Money(BigDecimal(10)))
         val expectedResponse =
-            FailureResponse(error = ApiError("Could not find a account with ${transactionRequest.receiverAccountNumber} account number"))
+            FailureResponse(error = ApiError("Could not find an account with ${transactionRequest.receiverAccountNumber} account number"))
 
         val entity = restTemplate.postForEntity("/transactions", transactionRequest, FailureResponse::class.java)
 
