@@ -13,4 +13,4 @@
 
 ### Api Doc
 
-Api documentation can be found at `/swagger-ui/index.html#/`
+Api documentation can be found at `http://<server_url>/swagger-ui/index.html#/`
