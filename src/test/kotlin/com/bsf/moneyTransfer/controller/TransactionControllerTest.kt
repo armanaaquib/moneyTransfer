@@ -2,10 +2,14 @@ package com.bsf.moneyTransfer.controller
 
 import com.bsf.moneyTransfer.dto.ApiError
 import com.bsf.moneyTransfer.dto.FailureResponse
+import com.bsf.moneyTransfer.dto.SuccessResponse
 import com.bsf.moneyTransfer.dto.TransactionRequest
 import com.bsf.moneyTransfer.exception.AccountNotFoundException
 import com.bsf.moneyTransfer.exception.InsufficientBalanceException
+import com.bsf.moneyTransfer.model.Account
 import com.bsf.moneyTransfer.model.Money
+import com.bsf.moneyTransfer.model.Transaction
+import com.bsf.moneyTransfer.model.TransactionType
 import com.bsf.moneyTransfer.service.TransactionService
 import com.bsf.moneyTransfer.util.asJsonString
 import org.junit.jupiter.api.Test
@@ -83,6 +87,21 @@ internal class TransactionControllerTest(@Autowired val mockMvc: MockMvc) {
             .willAnswer { throw AccountNotFoundException(transactionRequest.senderAccountNumber) }
         val expectedResponse =
             FailureResponse(ApiError("Could not find an account with ${transactionRequest.senderAccountNumber} account number"))
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/transactions")
+                .content(asJsonString(transactionRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isBadRequest)
+            .andExpect(content().json(asJsonString(expectedResponse)))
+    }
+
+    @Test
+    fun `should give error when amount is negative`() {
+        val transactionRequest = TransactionRequest("sender_account", "receiver_account", Money(BigDecimal(-10)))
+        val expectedResponse =
+            FailureResponse(ApiError("Amount can't be negative"))
 
         mockMvc.perform(
             MockMvcRequestBuilders.post("/transactions")

@@ -7,6 +7,7 @@ import com.bsf.moneyTransfer.exception.AccountNotFoundException
 import com.bsf.moneyTransfer.service.TransactionService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/transactions")
@@ -14,7 +15,7 @@ class TransactionController(private val transactionService: TransactionService) 
 
     @PostMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun transferMoney(@RequestBody transactionRequest: TransactionRequest) {
+    fun transferMoney(@Valid @RequestBody transactionRequest: TransactionRequest) {
         transactionService.transferMoney(
             transactionRequest.senderAccountNumber,
             transactionRequest.receiverAccountNumber,

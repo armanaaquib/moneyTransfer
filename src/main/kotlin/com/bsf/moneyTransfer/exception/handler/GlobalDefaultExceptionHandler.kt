@@ -6,6 +6,7 @@ import com.bsf.moneyTransfer.exception.AccountNotFoundException
 import com.bsf.moneyTransfer.exception.InsufficientBalanceException
 import org.springframework.http.HttpStatus
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -23,6 +24,12 @@ class GlobalDefaultExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun handleInsufficientBalanceException(exception: InsufficientBalanceException): FailureResponse {
         return FailureResponse(ApiError(exception.message))
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun handleMethodArgumentNotValidException(exception: MethodArgumentNotValidException): FailureResponse {
+        return FailureResponse(ApiError(exception.bindingResult.fieldError?.defaultMessage ?: "Invalid request"))
     }
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
