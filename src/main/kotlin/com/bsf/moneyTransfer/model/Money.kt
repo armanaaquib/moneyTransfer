@@ -15,6 +15,6 @@ data class Money(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @field:JsonIgnore
+    @JsonIgnore
     var id: Long? = null
 )

@@ -35,6 +35,6 @@ class TransactionService(
         transactionRepository.save(Transaction(receiverAccountNumber, amount, TransactionType.CREDIT))
     }
 
-    fun getTransactions(accountNumber: String) = transactionRepository.findAllByAccountNumber(accountNumber)
+    fun getTransactions(accountNumber: String) = transactionRepository.findAllByAccountNumberOrderByCreatedAtDesc(accountNumber)
 
 }

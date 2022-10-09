@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface TransactionRepository : JpaRepository<Transaction, Long> {
-    fun findAllByAccountNumber(accountNumber: String): List<Transaction>
+    fun findAllByAccountNumberOrderByCreatedAtDesc(accountNumber: String): List<Transaction>
 }

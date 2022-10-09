@@ -26,8 +26,8 @@ internal class TransactionRepositoryTest(
         entityManager.flush()
 
         Assertions.assertEquals(
-            listOf(transaction1, transaction2),
-            transactionRepository.findAllByAccountNumber(accountNumber)
+            listOf(transaction2, transaction1),
+            transactionRepository.findAllByAccountNumberOrderByCreatedAtDesc(accountNumber)
         )
     }
 }

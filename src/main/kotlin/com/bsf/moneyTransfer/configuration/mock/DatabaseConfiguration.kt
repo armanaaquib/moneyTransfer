@@ -1,4 +1,4 @@
-package com.bsf.moneyTransfer.configuration
+package com.bsf.moneyTransfer.configuration.mock
 
 import com.bsf.moneyTransfer.model.Account
 import com.bsf.moneyTransfer.model.Money

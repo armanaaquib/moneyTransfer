@@ -102,7 +102,7 @@ internal class TransactionServiceTest {
         val transaction1 = Transaction(accountNumber, Money(BigDecimal(100)), TransactionType.CREDIT)
         val transaction2 = Transaction(accountNumber, Money(BigDecimal(20)), TransactionType.DEBIT)
         val expectedTransactions = listOf(transaction1, transaction2)
-        given(transactionRepository.findAllByAccountNumber(accountNumber)).willReturn(
+        given(transactionRepository.findAllByAccountNumberOrderByCreatedAtDesc(accountNumber)).willReturn(
             expectedTransactions
         )
 
