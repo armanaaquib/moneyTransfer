@@ -5,12 +5,19 @@ import com.bsf.moneyTransfer.dto.FailureResponse
 import com.bsf.moneyTransfer.dto.TransactionRequest
 import com.bsf.moneyTransfer.dto.SuccessResponse
 import com.bsf.moneyTransfer.model.Money
+import com.bsf.moneyTransfer.model.Transaction
+import com.bsf.moneyTransfer.model.TransactionType
+import com.bsf.moneyTransfer.util.asJsonString
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.mockito.BDDMockito
+import org.skyscreamer.jsonassert.JSONAssert
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpStatus
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import java.math.BigDecimal
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -60,6 +67,18 @@ internal class TransactionIntegrationTest(@Autowired private val restTemplate: T
 
         assertEquals(HttpStatus.BAD_REQUEST, entity.statusCode)
         assertEquals(expectedResponse, entity.body)
+    }
+
+    @Test
+    fun `should return transactions for the given account number`() {
+        val accountNumber = "123"
+        val transaction1 = Transaction(accountNumber, Money(BigDecimal(100)), TransactionType.CREDIT)
+        val expectedResponse = SuccessResponse(listOf(transaction1))
+
+        val entity = restTemplate.getForEntity("/transactions/$accountNumber", String::class.java)
+
+        assertEquals(HttpStatus.OK, entity.statusCode)
+        JSONAssert.assertEquals(asJsonString(expectedResponse), entity.body, true)
     }
 
 }

@@ -4,6 +4,9 @@ import com.bsf.moneyTransfer.exception.AccountNotFoundException
 import com.bsf.moneyTransfer.exception.InsufficientBalanceException
 import com.bsf.moneyTransfer.model.Account
 import com.bsf.moneyTransfer.model.Money
+import com.bsf.moneyTransfer.model.Transaction
+import com.bsf.moneyTransfer.model.TransactionType
+import com.bsf.moneyTransfer.repository.TransactionRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -20,6 +23,9 @@ internal class TransactionServiceTest {
     @Mock
     private lateinit var accountService: AccountService
 
+    @Mock
+    private lateinit var transactionRepository: TransactionRepository
+
     @InjectMocks
     private lateinit var transactionService: TransactionService
 
@@ -32,8 +38,11 @@ internal class TransactionServiceTest {
         given(accountService.getAccount(senderAccountNumber)).willReturn(senderAccount)
         given(accountService.getAccount(receiverAccountNumber)).willReturn(receiverAccount)
 
-        transactionService.transferMoney(senderAccountNumber, receiverAccountNumber, Money(BigDecimal(10)))
+        val amount = Money(BigDecimal(10))
+        transactionService.transferMoney(senderAccountNumber, receiverAccountNumber, amount)
 
+        verify(transactionRepository).save(Transaction(senderAccountNumber, amount, TransactionType.DEBIT))
+        verify(transactionRepository).save(Transaction(receiverAccountNumber, amount, TransactionType.CREDIT))
         verify(accountService).updateAccount(senderAccount.copy(balance = Money(BigDecimal(90))))
         verify(accountService).updateAccount(receiverAccount.copy(balance = Money(BigDecimal(110))))
     }
@@ -85,6 +94,21 @@ internal class TransactionServiceTest {
         }
 
         assertEquals("Could not find an account with $receiverAccountNumber account number", exception.message)
+    }
+
+    @Test
+    fun `should return all the transactions for the given account number`() {
+        val accountNumber = "123"
+        val transaction1 = Transaction(accountNumber, Money(BigDecimal(100)), TransactionType.CREDIT)
+        val transaction2 = Transaction(accountNumber, Money(BigDecimal(20)), TransactionType.DEBIT)
+        val expectedTransactions = listOf(transaction1, transaction2)
+        given(transactionRepository.findAllByAccountNumber(accountNumber)).willReturn(
+            expectedTransactions
+        )
+
+        val transactions = transactionService.getTransactions(accountNumber)
+
+        assertEquals(expectedTransactions, transactions)
     }
 
 }

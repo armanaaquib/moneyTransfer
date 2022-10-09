@@ -3,16 +3,18 @@ package com.bsf.moneyTransfer.model
 import com.fasterxml.jackson.annotation.JsonIgnore
 import javax.persistence.*
 
+
 @Entity
-data class Account(
-    @Column(unique = true)
+data class Transaction(
     val accountNumber: String,
 
     @OneToOne(cascade = [CascadeType.ALL])
-    val balance: Money = Money(),
+    val amount: Money,
+
+    val type: TransactionType,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @field:JsonIgnore
-    var id: Long? = null
+    var id: Long? = null,
 )

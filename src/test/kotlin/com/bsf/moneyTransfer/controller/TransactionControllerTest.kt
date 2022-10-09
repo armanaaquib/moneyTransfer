@@ -112,4 +112,18 @@ internal class TransactionControllerTest(@Autowired val mockMvc: MockMvc) {
             .andExpect(content().json(asJsonString(expectedResponse)))
     }
 
+    @Test
+    fun `should return transactions for the given account number`() {
+        val accountNumber = "123"
+        val transaction1 = Transaction(accountNumber, Money(BigDecimal(100)), TransactionType.CREDIT)
+        val transaction2 = Transaction(accountNumber, Money(BigDecimal(20)), TransactionType.DEBIT)
+        val expectedTransactions = listOf(transaction1, transaction2)
+        val expectedResponse = SuccessResponse(expectedTransactions)
+        given(transactionService.getTransactions(accountNumber)).willReturn(expectedTransactions)
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/transactions/$accountNumber"))
+            .andExpect(status().isOk)
+            .andExpect(content().json((asJsonString(expectedResponse))))
+    }
+
 }
